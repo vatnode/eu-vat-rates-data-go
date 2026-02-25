@@ -56,10 +56,13 @@ jobs:
         if: steps.diff.outputs.rates_changed == 'true' && github.event.inputs.dry_run != 'true'
         run: |
           DATE=$(date -u +%Y-%m-%d)
-          VERSION=$(date -u +%Y.%-m.%-d)
+          # Go modules require v1.x.x (major >= 2 needs /vN path suffix)
+          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v1.0.0")
+          PATCH=$(echo "$LATEST_TAG" | cut -d. -f3)
+          VERSION="v1.0.$((PATCH + 1))"
           git config user.name "vatnode-bot"
           git config user.email "bot@vatnode.dev"
           git add eu-vat-rates.json
-          git commit -m "chore: update VAT rates ${DATE} (v${VERSION})"
-          git tag "v${VERSION}"
+          git commit -m "chore: update VAT rates ${DATE} (${VERSION})"
+          git tag "$VERSION"
           git push && git push --tags
