@@ -5,7 +5,7 @@
 //
 // Usage:
 //
-//	import euvatrates "github.com/vatnode/eu-vat-rates-go"
+//	import euvatrates "github.com/vatnode/eu-vat-rates-data-go"
 //
 //	rate, ok := euvatrates.GetRate("FI")
 //	// rate.Standard == 25.5, rate.Country == "Finland"

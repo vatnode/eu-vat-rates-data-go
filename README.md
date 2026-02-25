@@ -1,7 +1,7 @@
-# eu-vat-rates-go
+# eu-vat-rates-data-go
 
-[![Go Reference](https://pkg.go.dev/badge/github.com/vatnode/eu-vat-rates-go.svg)](https://pkg.go.dev/github.com/vatnode/eu-vat-rates-go)
-[![Last updated](https://img.shields.io/github/last-commit/vatnode/eu-vat-rates-go?path=eu-vat-rates.json&label=last%20updated)](https://github.com/vatnode/eu-vat-rates-go/commits/main)
+[![Go Reference](https://pkg.go.dev/badge/github.com/vatnode/eu-vat-rates-data-go.svg)](https://pkg.go.dev/github.com/vatnode/eu-vat-rates-data-go)
+[![Last updated](https://img.shields.io/github/last-commit/vatnode/eu-vat-rates-data-go?path=eu-vat-rates.json&label=last%20updated)](https://github.com/vatnode/eu-vat-rates-data-go/commits/main)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 EU VAT rates for all **27 EU member states** plus the **United Kingdom**, sourced from the [European Commission TEDB](https://taxation-customs.ec.europa.eu/tedb/vatRates.html). Checked daily, published automatically when rates change.
@@ -18,7 +18,7 @@ Also available in: [JavaScript/TypeScript (npm)](https://www.npmjs.com/package/e
 ## Installation
 
 ```bash
-go get github.com/vatnode/eu-vat-rates-go
+go get github.com/vatnode/eu-vat-rates-data-go
 ```
 
 ---
@@ -30,7 +30,7 @@ package main
 
 import (
     "fmt"
-    euvatrates "github.com/vatnode/eu-vat-rates-go"
+    euvatrates "github.com/vatnode/eu-vat-rates-data-go"
 )
 
 func main() {
