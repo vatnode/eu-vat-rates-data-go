@@ -22,13 +22,13 @@ jobs:
 
       - name: Download latest VAT rates
         run: |
-          curl -sf https://raw.githubusercontent.com/vatnode/eu-vat-rates-data-js/main/data/eu-vat-rates.json \
+          curl -sf https://raw.githubusercontent.com/vatnode/eu-vat-rates-data-js/main/data/eu-vat-rates-data.json \
             -o /tmp/latest.json
 
       - name: Check for rate changes
         id: diff
         run: |
-          CURRENT=$(python3 -c "import json,sys; print(json.dumps(json.load(open(sys.argv[1]))['rates'],sort_keys=True))" eu-vat-rates.json)
+          CURRENT=$(python3 -c "import json,sys; print(json.dumps(json.load(open(sys.argv[1]))['rates'],sort_keys=True))" eu-vat-rates-data.json)
           LATEST=$(python3 -c "import json,sys; print(json.dumps(json.load(open(sys.argv[1]))['rates'],sort_keys=True))" /tmp/latest.json)
           if [ "$CURRENT" = "$LATEST" ]; then
             echo "rates_changed=false" >> "$GITHUB_OUTPUT"
@@ -40,7 +40,7 @@ jobs:
 
       - name: Update embedded data
         if: steps.diff.outputs.rates_changed == 'true'
-        run: cp /tmp/latest.json eu-vat-rates.json
+        run: cp /tmp/latest.json eu-vat-rates-data.json
 
       - name: Set up Go
         if: steps.diff.outputs.rates_changed == 'true' && github.event.inputs.dry_run != 'true'
@@ -62,7 +62,7 @@ jobs:
           VERSION="v1.0.$((PATCH + 1))"
           git config user.name "vatnode-bot"
           git config user.email "bot@vatnode.dev"
-          git add eu-vat-rates.json
+          git add eu-vat-rates-data.json
           git commit -m "chore: update VAT rates ${DATE} (${VERSION})"
           git tag "$VERSION"
           git push && git push --tags

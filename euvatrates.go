@@ -21,7 +21,7 @@ import (
 	"strings"
 )
 
-//go:embed eu-vat-rates.json
+//go:embed eu-vat-rates-data.json
 var rawData []byte
 
 // VatRate holds all VAT rates for a single country.
