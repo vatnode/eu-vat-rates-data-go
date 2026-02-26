@@ -93,7 +93,7 @@ Rates are fetched from the **European Commission Taxes in Europe Database (TEDB)
 
 EU-27 member states + United Kingdom (28 countries total):
 
-`AT BE BG CY CZ DE DK EE ES FI FR GB GR HR HU IE IT LT LU LV MT NL PL PT RO SE SI SK`
+`AT` `BE` `BG` `CY` `CZ` `DE` `DK` `EE` `ES` `FI` `FR` `GB` `GR` `HR` `HU` `IE` `IT` `LT` `LU` `LV` `MT` `NL` `PL` `PT` `RO` `SE` `SI` `SK`
 
 ---
 
@@ -106,6 +106,8 @@ curl https://api.vatnode.dev/v1/vat/FI17156132 \
   -H "Authorization: Bearer vat_live_..."
 # → { "valid": true, "companyName": "Suomen Pehmeä Ikkuna Oy" }
 ```
+
+---
 
 ## License
 
