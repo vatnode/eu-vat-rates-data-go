@@ -83,7 +83,7 @@ type VatRate struct {
 
 Rates are fetched from the **European Commission Taxes in Europe Database (TEDB)**:
 
-- Canonical data repo: **https://github.com/vatnode/eu-vat-rates-data-js**
+- Canonical data repo: **https://github.com/vatnode/eu-vat-rates-data**
 - Refreshed: **daily at 08:00 UTC**
 - New git tag + pkg.go.dev version published only when rates change
 
