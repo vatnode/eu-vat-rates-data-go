@@ -4,12 +4,13 @@
 [![Last updated](https://img.shields.io/github/last-commit/vatnode/eu-vat-rates-data-go?path=eu-vat-rates-data.json&label=last%20updated)](https://github.com/vatnode/eu-vat-rates-data-go/commits/main)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-EU VAT rates for all **27 EU member states** plus the **United Kingdom**, sourced from the [European Commission TEDB](https://taxation-customs.ec.europa.eu/tedb/vatRates.html). Checked daily, published automatically when rates change.
+VAT rates for **44 European countries** — EU-27 plus Norway, Switzerland, UK, and more. EU rates sourced from the [European Commission TEDB](https://taxation-customs.ec.europa.eu/tedb/vatRates.html) and checked daily. Non-EU rates maintained manually.
 
 - Standard, reduced, super-reduced, and parking rates
+- `EUMember` field on every country — `true` for EU-27, `false` for non-EU
 - Zero dependencies — data embedded with `//go:embed`
 - Fully typed — works with Go 1.21+
-- Checked daily via GitHub Actions, new version tagged only when rates change
+- EU rates checked daily via GitHub Actions, new version tagged only when rates change
 
 Also available in: [JavaScript/TypeScript (npm)](https://www.npmjs.com/package/eu-vat-rates-data) · [Python (PyPI)](https://pypi.org/project/eu-vat-rates-data/) · [PHP (Packagist)](https://packagist.org/packages/vatnode/eu-vat-rates-data) · [Ruby (RubyGems)](https://rubygems.org/gems/eu_vat_rates_data)
 
@@ -37,28 +38,28 @@ func main() {
     // Full rate struct for a country
     fi, ok := euvatrates.GetRate("FI")
     if ok {
-        fmt.Printf("%s: %.1f%%\n", fi.Country, fi.Standard)
-        // Finland: 25.5%
+        fmt.Printf("%s: %.1f%% (EU member: %v)\n", fi.Country, fi.Standard, fi.EUMember)
+        // Finland: 25.5% (EU member: true)
     }
 
     // Just the standard rate
     standard, ok := euvatrates.GetStandardRate("DE")
     fmt.Println(standard) // 19
 
-    // Type guard
+    // EU membership check — false for non-EU countries (GB, NO, CH, ...)
     if euvatrates.IsEUMember(userInput) {
         rate, _ := euvatrates.GetRate(userInput)
-        _ = rate // guaranteed to be valid
+        _ = rate
     }
 
-    // All 28 countries
+    // All 44 countries
     all := euvatrates.GetAllRates()
     for code, rate := range all {
         fmt.Printf("%s: %.1f%%\n", code, rate.Standard)
     }
 
-    // Data version date
-    fmt.Println(euvatrates.DataVersion()) // "2026-02-25"
+    // When were EU rates last fetched?
+    fmt.Println(euvatrates.DataVersion()) // "2026-03-18"
 }
 ```
 
@@ -70,6 +71,7 @@ func main() {
 type VatRate struct {
     Country      string    `json:"country"`
     Currency     string    `json:"currency"`
+    EUMember     bool      `json:"eu_member"`
     Standard     float64   `json:"standard"`
     Reduced      []float64 `json:"reduced"`
     SuperReduced *float64  `json:"super_reduced"`
@@ -81,19 +83,21 @@ type VatRate struct {
 
 ## Data source & update frequency
 
-Rates are fetched from the **European Commission Taxes in Europe Database (TEDB)**:
-
-- Canonical data repo: **https://github.com/vatnode/eu-vat-rates-data**
-- Refreshed: **daily at 08:00 UTC**
+- EU-27 rates: **European Commission TEDB**, refreshed **daily at 08:00 UTC**
+- Non-EU rates: maintained manually, updated on official rate changes
 - New git tag + pkg.go.dev version published only when rates change
 
 ---
 
 ## Covered countries
 
-EU-27 member states + United Kingdom (28 countries total):
+**EU-27** (daily auto-updates via EC TEDB):
 
-`AT` `BE` `BG` `CY` `CZ` `DE` `DK` `EE` `ES` `FI` `FR` `GB` `GR` `HR` `HU` `IE` `IT` `LT` `LU` `LV` `MT` `NL` `PL` `PT` `RO` `SE` `SI` `SK`
+`AT` `BE` `BG` `CY` `CZ` `DE` `DK` `EE` `ES` `FI` `FR` `GR` `HR` `HU` `IE` `IT` `LT` `LU` `LV` `MT` `NL` `PL` `PT` `RO` `SE` `SI` `SK`
+
+**Non-EU Europe** (manually maintained):
+
+`AD` `AL` `BA` `CH` `GB` `GE` `IS` `LI` `MC` `MD` `ME` `MK` `NO` `RS` `TR` `UA` `XK`
 
 ---
 
