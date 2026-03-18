@@ -30,6 +30,7 @@ type VatRate struct {
 	Country      string    `json:"country"`
 	Currency     string    `json:"currency"`
 	EUMember     bool      `json:"eu_member"`
+	VATName      string    `json:"vat_name"`
 	Standard     float64   `json:"standard"`
 	Reduced      []float64 `json:"reduced"`
 	SuperReduced *float64  `json:"super_reduced"`

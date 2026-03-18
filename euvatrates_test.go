@@ -55,6 +55,14 @@ func TestEuMemberFieldPresent(t *testing.T) {
 	}
 }
 
+func TestAllVatNamesNonEmpty(t *testing.T) {
+	for code, rate := range GetAllRates() {
+		if rate.VATName == "" {
+			t.Errorf("%s: VATName is empty", code)
+		}
+	}
+}
+
 func TestDataVersionFormat(t *testing.T) {
 	v := DataVersion()
 	matched, _ := regexp.MatchString(`^\d{4}-\d{2}-\d{2}$`, v)
