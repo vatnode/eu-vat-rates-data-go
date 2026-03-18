@@ -1,18 +1,19 @@
-// Package euvatrates provides EU VAT rates for all 27 member states + UK.
+// Package euvatrates provides VAT rates for 44 European countries (EU-27 + 17 non-EU).
 //
-// Data is sourced from the European Commission TEDB (Taxes in Europe Database)
-// and embedded at compile time. Published automatically when rates change.
+// EU rates are sourced from the European Commission TEDB (Taxes in Europe Database)
+// and embedded at compile time. Non-EU rates are maintained manually.
 //
 // Usage:
 //
 //	import euvatrates "github.com/vatnode/eu-vat-rates-data-go"
 //
 //	rate, ok := euvatrates.GetRate("FI")
-//	// rate.Standard == 25.5, rate.Country == "Finland"
+//	// rate.Standard == 25.5, rate.Country == "Finland", rate.EUMember == true
 //
 //	standard, ok := euvatrates.GetStandardRate("DE")  // 19.0, true
+//	euvatrates.IsEUMember("NO")                        // false
 //	euvatrates.IsEUMember("FR")                        // true
-//	euvatrates.DataVersion()                           // "2026-02-25"
+//	euvatrates.DataVersion()                           // "2026-03-18"
 package euvatrates
 
 import (
@@ -28,6 +29,7 @@ var rawData []byte
 type VatRate struct {
 	Country      string    `json:"country"`
 	Currency     string    `json:"currency"`
+	EUMember     bool      `json:"eu_member"`
 	Standard     float64   `json:"standard"`
 	Reduced      []float64 `json:"reduced"`
 	SuperReduced *float64  `json:"super_reduced"`
@@ -67,7 +69,7 @@ func GetStandardRate(countryCode string) (float64, bool) {
 	return rate.Standard, true
 }
 
-// GetAllRates returns a copy of the full rates map (28 countries).
+// GetAllRates returns a copy of the full rates map (44 countries).
 func GetAllRates() map[string]VatRate {
 	out := make(map[string]VatRate, len(data.Rates))
 	for k, v := range data.Rates {
@@ -76,13 +78,15 @@ func GetAllRates() map[string]VatRate {
 	return out
 }
 
-// IsEUMember returns true if the country code is in the dataset (EU-27 + GB).
+// IsEUMember returns true if the country is an EU-27 member state.
+// Returns false for non-EU countries in the dataset (GB, NO, CH, etc.)
+// and for unknown country codes.
 func IsEUMember(countryCode string) bool {
-	_, ok := data.Rates[strings.ToUpper(countryCode)]
-	return ok
+	rate, ok := data.Rates[strings.ToUpper(countryCode)]
+	return ok && rate.EUMember
 }
 
-// DataVersion returns the ISO 8601 date when the data was last fetched from EC TEDB.
+// DataVersion returns the ISO 8601 date when the EU data was last fetched from EC TEDB.
 func DataVersion() string {
 	return data.Version
 }
