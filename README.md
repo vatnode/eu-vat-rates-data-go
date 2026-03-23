@@ -8,6 +8,7 @@ VAT rates for **44 European countries** — EU-27 plus Norway, Switzerland, UK, 
 
 - Standard, reduced, super-reduced, and parking rates
 - `EUMember` field on every country — `true` for EU-27, `false` for non-EU
+- `VATName` — official name of the VAT tax in the country's primary official language
 - Zero dependencies — data embedded with `//go:embed`
 - Fully typed — works with Go 1.21+
 - EU rates checked daily via GitHub Actions, new version tagged only when rates change
@@ -38,8 +39,8 @@ func main() {
     // Full rate struct for a country
     fi, ok := euvatrates.GetRate("FI")
     if ok {
-        fmt.Printf("%s: %.1f%% (EU member: %v)\n", fi.Country, fi.Standard, fi.EUMember)
-        // Finland: 25.5% (EU member: true)
+        fmt.Printf("%s: %.1f%% (EU member: %v, tax: %s)\n", fi.Country, fi.Standard, fi.EUMember, fi.VATName)
+        // Finland: 25.5% (EU member: true, tax: Arvonlisävero)
     }
 
     // Just the standard rate
@@ -72,6 +73,7 @@ type VatRate struct {
     Country      string    `json:"country"`
     Currency     string    `json:"currency"`
     EUMember     bool      `json:"eu_member"`
+    VATName      string    `json:"vat_name"`
     Standard     float64   `json:"standard"`
     Reduced      []float64 `json:"reduced"`
     SuperReduced *float64  `json:"super_reduced"`
