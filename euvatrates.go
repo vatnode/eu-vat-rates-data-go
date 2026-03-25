@@ -87,6 +87,13 @@ func IsEUMember(countryCode string) bool {
 	return ok && rate.EUMember
 }
 
+// HasRate returns true if the given country code is present in the dataset (all 44 countries).
+// Use IsEUMember to check EU membership specifically.
+func HasRate(countryCode string) bool {
+	_, ok := data.Rates[strings.ToUpper(countryCode)]
+	return ok
+}
+
 // DataVersion returns the ISO 8601 date when the EU data was last fetched from EC TEDB.
 func DataVersion() string {
 	return data.Version
