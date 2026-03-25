@@ -53,6 +53,12 @@ func main() {
         _ = rate
     }
 
+    // Dataset membership check (all 44 countries)
+    if euvatrates.HasRate(userInput) {
+        rate, _ := euvatrates.GetRate(userInput)
+        _ = rate
+    }
+
     // All 44 countries
     all := euvatrates.GetAllRates()
     for code, rate := range all {
