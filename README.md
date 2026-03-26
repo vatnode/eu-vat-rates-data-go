@@ -9,6 +9,7 @@ VAT rates for **44 European countries** — EU-27 plus Norway, Switzerland, UK, 
 - Standard, reduced, super-reduced, and parking rates
 - `EUMember` field on every country — `true` for EU-27, `false` for non-EU
 - `VATName` — official name of the VAT tax in the country's primary official language
+- `VATAbbr` — short abbreviation used locally (e.g. "ALV", "MwSt", "TVA")
 - Zero dependencies — data embedded with `//go:embed`
 - Fully typed — works with Go 1.21+
 - EU rates checked daily via GitHub Actions, new version tagged only when rates change
@@ -39,8 +40,8 @@ func main() {
     // Full rate struct for a country
     fi, ok := euvatrates.GetRate("FI")
     if ok {
-        fmt.Printf("%s: %.1f%% (EU member: %v, tax: %s)\n", fi.Country, fi.Standard, fi.EUMember, fi.VATName)
-        // Finland: 25.5% (EU member: true, tax: Arvonlisävero)
+        fmt.Printf("%s: %.1f%% (EU member: %v, tax: %s / %s)\n", fi.Country, fi.Standard, fi.EUMember, fi.VATName, fi.VATAbbr)
+        // Finland: 25.5% (EU member: true, tax: Arvonlisävero / ALV)
     }
 
     // Just the standard rate
@@ -66,7 +67,7 @@ func main() {
     }
 
     // When were EU rates last fetched?
-    fmt.Println(euvatrates.DataVersion()) // "2026-03-18"
+    fmt.Println(euvatrates.DataVersion()) // "2026-03-27"
 }
 ```
 
@@ -80,6 +81,7 @@ type VatRate struct {
     Currency     string    `json:"currency"`
     EUMember     bool      `json:"eu_member"`
     VATName      string    `json:"vat_name"`
+    VATAbbr      string    `json:"vat_abbr"`
     Standard     float64   `json:"standard"`
     Reduced      []float64 `json:"reduced"`
     SuperReduced *float64  `json:"super_reduced"`
@@ -91,7 +93,7 @@ type VatRate struct {
 
 ## Data source & update frequency
 
-- EU-27 rates: **European Commission TEDB**, refreshed **daily at 08:00 UTC**
+- EU-27 rates: **European Commission TEDB**, refreshed **daily at 07:00 UTC**
 - Non-EU rates: maintained manually, updated on official rate changes
 - New git tag + pkg.go.dev version published only when rates change
 
