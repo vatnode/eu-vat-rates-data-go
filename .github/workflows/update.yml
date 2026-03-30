@@ -57,9 +57,14 @@ jobs:
         run: |
           DATE=$(date -u +%Y-%m-%d)
           # Go modules require v1.x.x (major >= 2 needs /vN path suffix)
-          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v1.0.0")
-          PATCH=$(echo "$LATEST_TAG" | cut -d. -f3)
-          VERSION="v1.0.$((PATCH + 1))"
+          # Find latest v1.x.y tag from remote (shallow clone has no local tags)
+          LATEST=$(git ls-remote --tags origin 'refs/tags/v1.*' \
+            | awk '{print $2}' | sed 's|refs/tags/||' \
+            | grep -E '^v1\.[0-9]+\.[0-9]+$' \
+            | sort -t. -k2,2n -k3,3n | tail -1)
+          LATEST=${LATEST:-v1.0.0}
+          MINOR=$(echo "$LATEST" | cut -d. -f2)
+          VERSION="v1.$((MINOR + 1)).0"
           git config user.name "vatnode-bot"
           git config user.email "bot@vatnode.dev"
           git add eu-vat-rates-data.json
