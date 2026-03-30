@@ -19,6 +19,7 @@ package euvatrates
 import (
 	_ "embed"
 	"encoding/json"
+	"regexp"
 	"strings"
 )
 
@@ -31,10 +32,13 @@ type VatRate struct {
 	Currency     string    `json:"currency"`
 	EUMember     bool      `json:"eu_member"`
 	VATName      string    `json:"vat_name"`
+	VATAbbr      string    `json:"vat_abbr"`
 	Standard     float64   `json:"standard"`
 	Reduced      []float64 `json:"reduced"`
 	SuperReduced *float64  `json:"super_reduced"`
 	Parking      *float64  `json:"parking"`
+	Format       string    `json:"format"`
+	Pattern      *string   `json:"pattern"`
 }
 
 // Dataset is the top-level structure of the data file.
@@ -97,6 +101,23 @@ func HasRate(countryCode string) bool {
 // DataVersion returns the ISO 8601 date when the EU data was last fetched from EC TEDB.
 func DataVersion() string {
 	return data.Version
+}
+
+// ValidateFormat returns true if vatID matches the expected format for its country.
+// Input must include the country code prefix (e.g. "ATU12345678").
+// Returns false when the country has no standardised format or the ID does not match.
+// Note: Greece uses the "EL" prefix, not "GR".
+func ValidateFormat(vatID string) bool {
+	if len(vatID) < 2 {
+		return false
+	}
+	code := strings.ToUpper(vatID[:2])
+	rate, ok := data.Rates[code]
+	if !ok || rate.Pattern == nil {
+		return false
+	}
+	matched, err := regexp.MatchString(*rate.Pattern, strings.ToUpper(vatID))
+	return err == nil && matched
 }
 
 // RawDataset returns the full parsed Dataset struct.

@@ -10,6 +10,8 @@ VAT rates for **44 European countries** — EU-27 plus Norway, Switzerland, UK, 
 - `EUMember` field on every country — `true` for EU-27, `false` for non-EU
 - `VATName` — official name of the VAT tax in the country's primary official language
 - `VATAbbr` — short abbreviation used locally (e.g. "ALV", "MwSt", "TVA")
+- **`Format` — human-readable VAT number format (e.g. `"ATU + 8 digits"`)** — unique to this package
+- **`Pattern` — regex for VAT number validation + built-in `ValidateFormat()` — free, no API key needed** — unique to this package
 - Zero dependencies — data embedded with `//go:embed`
 - Fully typed — works with Go 1.21+
 - EU rates checked daily via GitHub Actions, new version tagged only when rates change
@@ -68,6 +70,16 @@ func main() {
 
     // When were EU rates last fetched?
     fmt.Println(euvatrates.DataVersion()) // "2026-03-27"
+
+    // VAT number format validation — no API key, no network call
+    euvatrates.ValidateFormat("ATU12345678") // → true
+    euvatrates.ValidateFormat("DE123456789") // → true
+    euvatrates.ValidateFormat("INVALID")     // → false
+
+    // Access format metadata directly
+    at, _ := euvatrates.GetRate("AT")
+    fmt.Println(at.Format)  // "ATU + 8 digits"
+    fmt.Println(*at.Pattern) // "^ATU\\d{8}$"
 }
 ```
 
@@ -86,6 +98,8 @@ type VatRate struct {
     Reduced      []float64 `json:"reduced"`
     SuperReduced *float64  `json:"super_reduced"`
     Parking      *float64  `json:"parking"`
+    Format       string    `json:"format"`   // "ATU + 8 digits"
+    Pattern      *string   `json:"pattern"`  // "^ATU\\d{8}$" — nil if no standard format
 }
 ```
 
