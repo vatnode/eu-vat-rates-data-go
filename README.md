@@ -78,8 +78,13 @@ func main() {
 
     // Access format metadata directly
     at, _ := euvatrates.GetRate("AT")
-    fmt.Println(at.Format)  // "ATU + 8 digits"
+    fmt.Println(at.Format)   // "ATU + 8 digits"
     fmt.Println(*at.Pattern) // "^ATU\\d{8}$"
+
+    // Flag emoji from a 2-letter country code — no lookup table, computed from regional indicator symbols
+    fmt.Println(euvatrates.GetFlag("FI")) // "🇫🇮"
+    fmt.Println(euvatrates.GetFlag("DE")) // "🇩🇪"
+    fmt.Println(euvatrates.GetFlag("XX")) // "" (empty string for unknown/invalid codes)
 }
 ```
 
