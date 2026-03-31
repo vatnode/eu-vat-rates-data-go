@@ -124,3 +124,25 @@ func ValidateFormat(vatID string) bool {
 func RawDataset() Dataset {
 	return data
 }
+
+// GetFlag returns the flag emoji for a 2-letter ISO 3166-1 alpha-2 country code.
+// Computed from regional indicator symbols — no lookup table needed.
+// Returns an empty string if the input is not exactly 2 ASCII letters.
+//
+// Example:
+//
+//	GetFlag("FI") // "🇫🇮"
+//	GetFlag("DE") // "🇩🇪"
+//	GetFlag("GB") // "🇬🇧"
+func GetFlag(countryCode string) string {
+	code := strings.ToUpper(countryCode)
+	if len(code) != 2 {
+		return ""
+	}
+	a, b := rune(code[0]), rune(code[1])
+	if a < 'A' || a > 'Z' || b < 'A' || b > 'Z' {
+		return ""
+	}
+	const base = 0x1F1E6
+	return string([]rune{base + a - 'A', base + b - 'A'})
+}
