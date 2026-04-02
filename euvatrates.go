@@ -38,7 +38,7 @@ type VatRate struct {
 	SuperReduced *float64  `json:"super_reduced"`
 	Parking      *float64  `json:"parking"`
 	Format       string    `json:"format"`
-	Pattern      *string   `json:"pattern"`
+	Pattern      string    `json:"pattern"` // Always present for all 44 countries
 }
 
 // Dataset is the top-level structure of the data file.
@@ -113,10 +113,10 @@ func ValidateFormat(vatID string) bool {
 	}
 	code := strings.ToUpper(vatID[:2])
 	rate, ok := data.Rates[code]
-	if !ok || rate.Pattern == nil {
+	if !ok {
 		return false
 	}
-	matched, err := regexp.MatchString(*rate.Pattern, strings.ToUpper(vatID))
+	matched, err := regexp.MatchString(rate.Pattern, strings.ToUpper(vatID))
 	return err == nil && matched
 }
 

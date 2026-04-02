@@ -79,7 +79,7 @@ func main() {
     // Access format metadata directly
     at, _ := euvatrates.GetRate("AT")
     fmt.Println(at.Format)   // "ATU + 8 digits"
-    fmt.Println(*at.Pattern) // "^ATU\\d{8}$"
+    fmt.Println(at.Pattern) // "^ATU\\d{8}$"
 
     // Flag emoji from a 2-letter country code — no lookup table, computed from regional indicator symbols
     fmt.Println(euvatrates.GetFlag("FI")) // "🇫🇮"
@@ -104,7 +104,7 @@ type VatRate struct {
     SuperReduced *float64  `json:"super_reduced"`
     Parking      *float64  `json:"parking"`
     Format       string    `json:"format"`   // "ATU + 8 digits"
-    Pattern      *string   `json:"pattern"`  // "^ATU\\d{8}$" — nil if no standard format
+    Pattern      string    `json:"pattern"`  // "^ATU\\d{8}$" — always present for all 44 countries
 }
 ```
 
