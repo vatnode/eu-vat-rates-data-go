@@ -25,8 +25,8 @@ func TestNoIsNotEuMember(t *testing.T) {
 
 func TestDatasetSize(t *testing.T) {
 	all := GetAllRates()
-	if len(all) != 44 {
-		t.Errorf("dataset size: got %d, want 44", len(all))
+	if len(all) != 45 {
+		t.Errorf("dataset size: got %d, want 45", len(all))
 	}
 }
 
