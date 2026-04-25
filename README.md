@@ -4,7 +4,7 @@
 [![Last updated](https://img.shields.io/github/last-commit/vatnode/eu-vat-rates-data-go?path=eu-vat-rates-data.json&label=last%20updated)](https://github.com/vatnode/eu-vat-rates-data-go/commits/main)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-VAT rates for **44 European countries** — EU-27 plus Norway, Switzerland, UK, and more. EU rates sourced from the European Commission TEDB and checked daily. Non-EU rates maintained manually.
+VAT rates for **45 European countries** — EU-27 plus Norway, Switzerland, UK, and more. EU rates sourced from the European Commission TEDB and checked daily. Non-EU rates maintained manually.
 
 - Standard, reduced, super-reduced, and parking rates
 - `EUMember` field on every country — `true` for EU-27, `false` for non-EU
@@ -56,13 +56,13 @@ func main() {
         _ = rate
     }
 
-    // Dataset membership check (all 44 countries)
+    // Dataset membership check (all 45 countries)
     if euvatrates.HasRate(userInput) {
         rate, _ := euvatrates.GetRate(userInput)
         _ = rate
     }
 
-    // All 44 countries
+    // All 45 countries
     all := euvatrates.GetAllRates()
     for code, rate := range all {
         fmt.Printf("%s: %.1f%%\n", code, rate.Standard)
@@ -104,7 +104,7 @@ type VatRate struct {
     SuperReduced *float64  `json:"super_reduced"`
     Parking      *float64  `json:"parking"`
     Format       string    `json:"format"`   // "ATU + 8 digits"
-    Pattern      string    `json:"pattern"`  // "^ATU\\d{8}$" — always present for all 44 countries
+    Pattern      string    `json:"pattern"`  // "^ATU\\d{8}$" — always present for all 45 countries
 }
 ```
 
