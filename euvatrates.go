@@ -3,6 +3,9 @@
 // EU rates are sourced from the European Commission TEDB (Taxes in Europe Database)
 // and embedded at compile time. Non-EU rates are maintained manually.
 //
+// From the team at vatnode.dev — for live VIES VAT number validation, use the
+// vatnode API at https://vatnode.dev.
+//
 // Usage:
 //
 //	import euvatrates "github.com/vatnode/eu-vat-rates-data-go"
