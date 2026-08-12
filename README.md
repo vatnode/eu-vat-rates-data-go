@@ -24,7 +24,7 @@ Also available in: [JavaScript/TypeScript (npm)](https://www.npmjs.com/package/e
 
 This package gives you VAT **rates** and **format checks** for free, offline, in your code. It does **not** call VIES — `ValidateFormat()` only checks the shape of a VAT number, not whether it actually exists.
 
-For **live VIES validation** — confirming a VAT ID is real, pulling the registered company name and address, and getting a VIES consultation number (audit-grade proof of validation) — there's **[vatnode](https://vatnode.dev)**:
+For **live VIES validation** — confirming a VAT ID is real, pulling the registered company name and address, and getting the VIES consultation number as your reference for the check — there's **[vatnode](https://vatnode.dev)**:
 
 - Live VIES validation, with national-database fallback when VIES is down
 - Registered company name, address, registration date
@@ -134,7 +134,9 @@ type VatRate struct {
 
 ## Data source & update frequency
 
-- EU-27 rates: **European Commission TEDB**, refreshed **daily at 07:00 UTC**
+How the daily check works, and what changed when: [vatnode.dev/data](https://vatnode.dev/data?ref=rates-readme-go).
+
+- EU-27 rates: **European Commission TEDB**, checked against the source **daily at 07:00 UTC**, updated on any change
 - Non-EU rates: maintained manually, updated on official rate changes
 - New git tag + pkg.go.dev version published only when rates change
 
@@ -159,7 +161,7 @@ No package needed — parse it with a single `fetch()` / `http.get()` / `file_ge
 
 ## Covered countries
 
-**EU-27** (daily auto-updates via EC TEDB):
+**EU-27** (checked daily against EC TEDB, updated on any change):
 
 `AT` `BE` `BG` `CY` `CZ` `DE` `DK` `EE` `ES` `FI` `FR` `GR` `HR` `HU` `IE` `IT` `LT` `LU` `LV` `MT` `NL` `PL` `PT` `RO` `SE` `SI` `SK`
 
