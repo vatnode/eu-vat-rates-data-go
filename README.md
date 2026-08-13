@@ -112,6 +112,60 @@ func main() {
 
 ---
 
+## Example: charging VAT on an invoice
+
+Rates on their own rarely answer the question you actually have, which is what
+to put on the invoice. Two rules cover most of it: charge the buyer's domestic
+rate, unless the sale is cross-border B2B inside the EU, where the reverse
+charge applies and you invoice 0%.
+
+```go
+import (
+    "math"
+
+    euvatrates "github.com/vatnode/eu-vat-rates-data-go"
+)
+
+// Money in minor units (cents). Never floats.
+type Invoice struct {
+    VATCents      int64
+    TotalCents    int64
+    ReverseCharge bool
+}
+
+func InvoiceTotal(netCents int64, sellerCountry, buyerCountry, buyerVATID string) Invoice {
+    isCrossBorderB2B := buyerCountry != sellerCountry &&
+        buyerVATID != "" &&
+        euvatrates.ValidateFormat(buyerVATID)
+
+    if isCrossBorderB2B {
+        return Invoice{VATCents: 0, TotalCents: netCents, ReverseCharge: true}
+    }
+
+    rate, ok := euvatrates.GetStandardRate(buyerCountry)
+    if !ok {
+        return Invoice{VATCents: 0, TotalCents: netCents}
+    }
+
+    vatCents := int64(math.Round(float64(netCents) * rate / 100))
+    return Invoice{VATCents: vatCents, TotalCents: netCents + vatCents}
+}
+
+// Domestic sale in Finland — 25.5%
+InvoiceTotal(10000, "FI", "FI", "")
+// → {VATCents: 2550, TotalCents: 12550, ReverseCharge: false}
+
+// Finnish seller, German business buyer — reverse charge
+InvoiceTotal(10000, "FI", "DE", "DE123456789")
+// → {VATCents: 0, TotalCents: 10000, ReverseCharge: true}
+```
+
+`ValidateFormat()` only checks the shape of the number. Applying the reverse charge
+requires the buyer to actually be VAT-registered, which is a VIES lookup — see
+above.
+
+---
+
 ## Types
 
 ```go
