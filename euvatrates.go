@@ -115,6 +115,11 @@ func ValidateFormat(vatID string) bool {
 		return false
 	}
 	code := strings.ToUpper(vatID[:2])
+	// Greek VAT numbers carry the VIES prefix EL, while the dataset keys Greece
+	// under its ISO code GR.
+	if code == "EL" {
+		code = "GR"
+	}
 	rate, ok := data.Rates[code]
 	if !ok {
 		return false
