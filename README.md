@@ -1,10 +1,13 @@
 # eu-vat-rates-data-go
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/vatnode/eu-vat-rates-data-go.svg)](https://pkg.go.dev/github.com/vatnode/eu-vat-rates-data-go)
+[![Test](https://github.com/vatnode/eu-vat-rates-data-go/actions/workflows/test.yml/badge.svg)](https://github.com/vatnode/eu-vat-rates-data-go/actions/workflows/test.yml)
 [![Last updated](https://img.shields.io/github/last-commit/vatnode/eu-vat-rates-data-go?path=eu-vat-rates-data.json&label=last%20updated)](https://github.com/vatnode/eu-vat-rates-data-go/commits/main)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 VAT rates for **45 European countries** — EU-27 plus Norway, Switzerland, UK, and more. EU rates sourced from the European Commission TEDB and checked daily. Non-EU rates maintained manually.
+
+Part of **[VATNode VAT Rates](https://vatnode.dev/vat-rates)** · [canonical dataset](https://github.com/vatnode/eu-vat-rates-data) · [methodology](https://vatnode.dev/data) · other languages: [JavaScript](https://github.com/vatnode/eu-vat-rates-data-js), [Python](https://github.com/vatnode/eu-vat-rates-data-python), [PHP](https://github.com/vatnode/eu-vat-rates-data-php), [Ruby](https://github.com/vatnode/eu-vat-rates-data-ruby)
 
 - Standard, reduced, super-reduced, and parking rates
 - `EUMember` field on every country — `true` for EU-27, `false` for non-EU
@@ -114,10 +117,9 @@ func main() {
 
 ## Example: charging VAT on an invoice
 
-Rates on their own rarely answer the question you actually have, which is what
-to put on the invoice. Two rules cover most of it: charge the buyer's domestic
-rate, unless the sale is cross-border B2B inside the EU, where the reverse
-charge applies and you invoice 0%.
+Rates alone do not determine invoice treatment. Resolve place-of-supply,
+customer status, category, exemptions, and any reverse-charge eligibility in
+your tax logic first; then use the dataset for the applicable numeric rate.
 
 ```go
 import (
@@ -133,12 +135,8 @@ type Invoice struct {
     ReverseCharge bool
 }
 
-func InvoiceTotal(netCents int64, sellerCountry, buyerCountry, buyerVATID string) Invoice {
-    isCrossBorderB2B := buyerCountry != sellerCountry &&
-        buyerVATID != "" &&
-        euvatrates.ValidateFormat(buyerVATID)
-
-    if isCrossBorderB2B {
+func InvoiceTotal(netCents int64, buyerCountry string, reverseChargeEligible bool) Invoice {
+    if reverseChargeEligible {
         return Invoice{VATCents: 0, TotalCents: netCents, ReverseCharge: true}
     }
 
@@ -152,17 +150,16 @@ func InvoiceTotal(netCents int64, sellerCountry, buyerCountry, buyerVATID string
 }
 
 // Domestic sale in Finland — 25.5%
-InvoiceTotal(10000, "FI", "FI", "")
+InvoiceTotal(10000, "FI", false)
 // → {VATCents: 2550, TotalCents: 12550, ReverseCharge: false}
 
 // Finnish seller, German business buyer — reverse charge
-InvoiceTotal(10000, "FI", "DE", "DE123456789")
+InvoiceTotal(10000, "DE", true)
 // → {VATCents: 0, TotalCents: 10000, ReverseCharge: true}
 ```
 
-`ValidateFormat()` only checks the shape of the number. Applying the reverse charge
-requires the buyer to actually be VAT-registered, which is a VIES lookup — see
-above.
+`reverseChargeEligible` must come from applicable tax logic and evidence.
+`ValidateFormat()` only checks a number's shape; it does not establish registration or eligibility.
 
 ---
 
