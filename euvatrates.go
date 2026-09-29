@@ -47,14 +47,8 @@ type VatRate struct {
 	Identifiers  Identifiers `json:"identifiers"`
 }
 
-// NameInLanguage is a name and its abbreviation in one language.
-type NameInLanguage struct {
-	Name string  `json:"name"`
-	Abbr *string `json:"abbr"`
-}
-
 // LocalizedName is keyed by ISO 639-1 language code: every official language, plus "en".
-type LocalizedName map[string]NameInLanguage
+type LocalizedName map[string]string
 
 // Identifiers holds names (not numbers) of the company registrar, register and
 // identifiers. A nil map means no official name could be confirmed.
