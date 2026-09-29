@@ -33,17 +33,37 @@ var rawData []byte
 
 // VatRate holds all VAT rates for a single country.
 type VatRate struct {
-	Country      string    `json:"country"`
-	Currency     string    `json:"currency"`
-	EUMember     bool      `json:"eu_member"`
-	VATName      string    `json:"vat_name"`
-	VATAbbr      string    `json:"vat_abbr"`
-	Standard     float64   `json:"standard"`
-	Reduced      []float64 `json:"reduced"`
-	SuperReduced *float64  `json:"super_reduced"`
-	Parking      *float64  `json:"parking"`
-	Format       string    `json:"format"`
-	Pattern      string    `json:"pattern"` // Always present for all 45 countries
+	Country      string      `json:"country"`
+	Currency     string      `json:"currency"`
+	EUMember     bool        `json:"eu_member"`
+	VATName      string      `json:"vat_name"`
+	VATAbbr      string      `json:"vat_abbr"`
+	Standard     float64     `json:"standard"`
+	Reduced      []float64   `json:"reduced"`
+	SuperReduced *float64    `json:"super_reduced"`
+	Parking      *float64    `json:"parking"`
+	Format       string      `json:"format"`
+	Pattern      string      `json:"pattern"` // Always present for all 45 countries
+	Identifiers  Identifiers `json:"identifiers"`
+}
+
+// NameInLanguage is a name and its abbreviation in one language.
+type NameInLanguage struct {
+	Name string  `json:"name"`
+	Abbr *string `json:"abbr"`
+}
+
+// LocalizedName is keyed by ISO 639-1 language code: every official language, plus "en".
+type LocalizedName map[string]NameInLanguage
+
+// Identifiers holds names (not numbers) of the company registrar, register and
+// identifiers. A nil map means no official name could be confirmed.
+type Identifiers struct {
+	RegistryAuthorityName LocalizedName `json:"registry_authority_name"`
+	RegistryName          LocalizedName `json:"registry_name"`
+	RegistryCodeName      LocalizedName `json:"registry_code_name"`
+	TaxIDName             LocalizedName `json:"tax_id_name"`
+	VatIDName             LocalizedName `json:"vat_id_name"`
 }
 
 // Dataset is the top-level structure of the data file.
